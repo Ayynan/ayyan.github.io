@@ -13,22 +13,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* 1. Theme Variables */
         :root {
             --bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --text-color: #1c1e21;
             --card-bg: white;
-            --shadow: rgba(0,0,0,0.1);
+            --footer-color: #666;
         }
 
         [data-theme="dark"] {
             --bg-color: #121212;
             --text-color: #ffffff;
             --card-bg: #1e1e1e;
-            --shadow: rgba(255,255,255,0.05);
+            --footer-color: #aaa;
         }
 
-        /* 2. Fade-In Animation */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -46,7 +44,6 @@
             animation: fadeInUp 1s ease-out;
         }
 
-        /* Toggle Button */
         #theme-toggle {
             position: fixed;
             top: 20px;
@@ -59,7 +56,6 @@
             cursor: pointer;
             font-weight: bold;
             z-index: 1000;
-            box-shadow: 0 4px 6px var(--shadow);
         }
 
         img {
@@ -72,8 +68,7 @@
         }
 
         h1 { margin-top: 20px; font-size: 28px; }
-        p { color: #666; margin-bottom: 30px; }
-        [data-theme="dark"] p { color: #aaa; }
+        p { color: var(--footer-color); margin-bottom: 30px; }
 
         a { text-decoration: none; display: block; margin: 15px auto; width: fit-content; }
 
@@ -91,23 +86,30 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: transform 0.3s ease, filter 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         button:hover { transform: scale(1.05); filter: brightness(1.1); }
         .youtube-btn { background-color: #ff0000; }
         .email-btn { background-color: #333; }
 
-        /* Visitor Counter Style */
         .counter-box {
-            margin-top: 40px;
+            margin-top: 30px;
             font-size: 14px;
             background: rgba(0,0,0,0.05);
             display: inline-block;
             padding: 8px 20px;
             border-radius: 20px;
         }
-        [data-theme="dark"] .counter-box { background: rgba(255,255,255,0.1); }
+
+        /* The Footer Quote */
+        .footer-quote {
+            margin-top: 40px;
+            font-style: italic;
+            font-size: 16px;
+            color: var(--footer-color);
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -131,11 +133,12 @@
     </a>
 
     <div class="counter-box">
-        <i class="fas fa-chart-line"></i> Visitor Milestone: <span id="visitor-count">100+</span>
+        <i class="fas fa-chart-line"></i> Visitor Milestone: 100+
     </div>
 
+    <p class="footer-quote">"Code is my language."</p>
+
     <script>
-        // Dark Mode Logic
         function toggleTheme() {
             const body = document.documentElement;
             const currentTheme = body.getAttribute("data-theme");
