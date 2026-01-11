@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayyan.codes | Web Developer Portfolio</title>
+    <title>Ayyan.codes | Portfolio</title>
     
-    <meta property="og:title" content="Ayyan.codes | Web Developer">
-    <meta property="og:description" content="Check out my coding projects and web development journey!">
-    <meta property="og:image" content="https://ayynan.github.io/me.jpg">
-    <meta property="og:url" content="https://ayynan.github.io/">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -18,7 +13,7 @@
             --text-color: #1c1e21;
             --card-bg: white;
             --btn-primary: #007bff;
-            --footer-color: #666;
+            --accent-bg: rgba(0, 123, 255, 0.1);
         }
 
         [data-theme="dark"] {
@@ -26,12 +21,7 @@
             --text-color: #ffffff;
             --card-bg: #1e1e1e;
             --btn-primary: #3793ff;
-            --footer-color: #aaa;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            --accent-bg: rgba(255, 255, 255, 0.15);
         }
 
         body {
@@ -40,176 +30,239 @@
             background: var(--bg-color);
             min-height: 100vh;
             color: var(--text-color);
-            padding: 50px 20px;
+            padding: 40px 20px;
             margin: 0;
-            transition: background 0.5s ease, color 0.5s ease;
-            animation: fadeInUp 1s ease-out;
+            transition: background 0.5s ease;
         }
 
-        /* Sticky Bottom-Right Toggle */
         #theme-toggle {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 20px; right: 20px;
             background: var(--text-color);
             color: var(--card-bg);
             border: none;
             padding: 12px 18px;
             border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
             z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        img.profile-pic {
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            margin-bottom: 10px;
         }
 
         .container { max-width: 500px; margin: 0 auto; }
+        img.profile-pic { border-radius: 50%; border: 5px solid white; width: 140px; height: 140px; object-fit: cover; margin-bottom: 10px; }
 
-        .section-title { 
-            margin-top: 40px; 
-            font-size: 22px; 
-            border-bottom: 3px solid var(--btn-primary); 
-            display: inline-block; 
-            padding-bottom: 5px;
-            margin-bottom: 20px;
+        /* KSA CLOCK */
+        .clock-container { display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
+        .clock {
+            width: 70px; height: 70px; border: 3px solid var(--btn-primary);
+            border-radius: 50%; position: relative; background: var(--card-bg);
         }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: var(--text-color); border-radius: 4px; transform: translateX(-50%); }
+        .hour { width: 3px; height: 25%; z-index: 3; }
+        .min { width: 2px; height: 35%; z-index: 2; }
+        .sec { width: 1px; height: 40%; background: #ff4757; z-index: 1; }
+        .center-dot { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--btn-primary); border-radius: 50%; transform: translate(-50%, -50%); z-index: 4; }
+        .clock-label { font-size: 10px; font-weight: bold; margin-top: 5px; color: var(--btn-primary); }
 
-        .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* INTRO BOX */
+        .welcome-intro {
+            background: var(--accent-bg); 
+            padding: 22px; 
+            border-radius: 15px;
+            margin: 20px 0; 
+            text-align: left; 
+            line-height: 1.6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: none;
+        }
+        .intro-header {
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            font-weight: 800; 
+            color: var(--btn-primary);
+            margin-bottom: 8px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+        .arrow-prompt { font-size: 16px; font-weight: bold; color: var(--btn-primary); }
+
+        /* SKILLS BAR */
+        .skills-bar { display: flex; justify-content: center; gap: 20px; font-size: 26px; margin: 20px 0; }
+        .skills-bar i { transition: transform 0.2s; cursor: help; }
+        .skills-bar i:hover { transform: scale(1.2); color: var(--btn-primary); }
+
+        /* TITLES & BIG BOX GRID */
+        .section-title { margin-top: 35px; font-size: 20px; border-bottom: 3px solid var(--btn-primary); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
         
-        .project-link { text-decoration: none; color: inherit; display: block; }
-
-        .project-card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
+        .grid-layout { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            margin-bottom: 10px; 
+            width: 100%;
         }
-
-        .project-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        form { 
+        .card-link { text-decoration: none; color: inherit; display: block; }
+        
+        .feature-card { 
             background: var(--card-bg); 
-            padding: 25px; 
+            padding: 25px 15px; 
             border-radius: 15px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            transition: 0.3s; 
+            min-height: 120px;
             display: flex; 
             flex-direction: column; 
-            gap: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        
-        input, textarea { 
-            padding: 12px; 
-            border-radius: 8px; 
-            border: 1px solid #ccc; 
-            font-family: inherit;
-            background: var(--card-bg);
-            color: var(--text-color);
-        }
-
-        .main-btn {
-            background-color: var(--btn-primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
+            align-items: center; 
             justify-content: center;
-            gap: 10px;
-            transition: transform 0.3s ease;
-            text-decoration: none;
-            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        .feature-card:hover { transform: translateY(-8px); background: var(--accent-bg); border: 1px solid var(--btn-primary); }
+        .feature-card i { font-size: 32px; margin-bottom: 12px; }
+        .feature-card h3 { margin: 0; font-size: 16px; font-weight: 600; }
+
+        /* UPDATED MAIN BUTTONS HOVER */
+        .main-btn { 
+            background-color: var(--btn-primary); 
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 30px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            text-decoration: none; 
+            margin-bottom: 15px; 
+            transition: 0.3s ease; /* Smooth transition */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .main-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
-        .youtube-btn { background-color: #ff0000; }
-        
-        .footer-quote { margin-top: 50px; font-style: italic; color: var(--footer-color); font-size: 14px; }
+        /* Matches the card hover "lift" and color shift */
+        .main-btn:hover { 
+            transform: translateY(-5px); 
+            filter: brightness(1.1);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        form { background: var(--card-bg); padding: 20px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        input, textarea { padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: var(--card-bg); color: var(--text-color); font-family: inherit; }
     </style>
 </head>
 <body>
 
-    <button id="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i> <span>Dark Mode</span>
-    </button>
+    <button id="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
 
     <div class="container">
         <img src="me.jpg" alt="Ayyan" class="profile-pic">
         <h1>Ayyan.codes</h1>
-        <p>Developing the future of the web.</p>
+
+        <div class="clock-container">
+            <div class="clock">
+                <div class="center-dot"></div>
+                <div id="hour" class="hand hour"></div>
+                <div id="min" class="hand min"></div>
+                <div id="sec" class="hand sec"></div>
+            </div>
+            <div class="clock-label">KSA TIME</div>
+        </div>
+
+        <div class="welcome-intro">
+            <div class="intro-header">
+                <span class="arrow-prompt">➤</span> SYSTEM ONLINE
+            </div>
+            <div>
+                Hi, I'm <strong>Ayyan</strong>. I'm a developer building fast, responsive, and modern web experiences. <strong>Check out the features and tech stack I've used below!</strong>
+            </div>
+        </div>
+
+        <div class="skills-bar">
+            <i class="fab fa-html5" title="HTML5"></i>
+            <i class="fab fa-css3-alt" title="CSS3"></i>
+            <i class="fab fa-js" title="JavaScript"></i>
+            <i class="fab fa-github" title="GitHub"></i>
+            <i class="fab fa-python" title="Python"></i>
+            <i class="fas fa-dragon" title="Dragon Game Engine"></i>
+        </div>
 
         <a href="https://github.com/Ayynan" target="_blank" class="main-btn">
-            <i class="fab fa-github"></i> GitHub
+            <i class="fab fa-github"></i> GitHub Profile
         </a>
-        <a href="https://www.youtube.com/channel/UCKAK0xKz0c1oAJ3I2SUApHg" target="_blank" class="main-btn youtube-btn">
-            <i class="fab fa-youtube"></i> YouTube
+        
+        <a href="https://www.youtube.com/channel/UCKAK0xKz0c1oAJ3I2SUApHg" target="_blank" class="main-btn" style="background-color: #ff0000;">
+            <i class="fab fa-youtube"></i> YouTube Channel
         </a>
-
-        <h2 class="section-title">My Projects</h2>
-        <div class="project-grid">
-            <a href="https://github.com/Ayynan/ayynan.github.io" target="_blank" class="project-link">
-                <div class="project-card">
-                    <i class="fas fa-link" style="color: var(--btn-primary); font-size: 24px;"></i>
-                    <h3 style="margin: 10px 0 5px 0;">Site Code</h3>
-                    <p style="font-size: 12px; margin: 0;">Explore the logic behind this portfolio.</p>
+        
+        <h2 class="section-title">Development</h2>
+        <div class="grid-layout">
+            <a href="https://github.com/Ayynan/ayynan.github.io" target="_blank" class="card-link">
+                <div class="feature-card">
+                    <i class="fas fa-code" style="color: var(--btn-primary);"></i>
+                    <h3>Site Source</h3>
                 </div>
             </a>
-
-            <a href="https://github.com/Ayynan" target="_blank" class="project-link">
-                <div class="project-card">
-                    <i class="fas fa-laptop-code" style="color: #28a745; font-size: 24px;"></i>
-                    <h3 style="margin: 10px 0 5px 0;">Other Projects</h3>
-                    <p style="font-size: 12px; margin: 0;">Discover my latest web experiments.</p>
+            <a href="https://github.com/Ayynan" target="_blank" class="card-link">
+                <div class="feature-card">
+                    <i class="fas fa-folder-open" style="color: #ffaa00;"></i>
+                    <h3>My Projects</h3>
                 </div>
             </a>
         </div>
 
-        <h2 class="section-title">Contact Me</h2>
+        <h2 class="section-title">Contents</h2>
+        <div class="grid-layout">
+            <a href="demo.mp4" target="_blank" class="card-link">
+                <div class="feature-card">
+                    <i class="fas fa-video" style="color: #ff4757;"></i>
+                    <h3>Video Feature</h3>
+                </div>
+            </a>
+            <a href="audio.mp3" target="_blank" class="card-link">
+                <div class="feature-card">
+                    <i class="fas fa-music" style="color: #2ed573;"></i>
+                    <h3>Audio Feature</h3>
+                </div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Contact</h2>
         <form action="https://formspree.io/f/ayynanwaheed2021@gmail.com" method="POST">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <textarea name="message" rows="3" placeholder="Message" required></textarea>
             <button type="submit" class="main-btn">Send Message</button>
         </form>
-
-        <p class="footer-quote">"Code is my language."</p>
     </div>
 
     <script>
         function toggleTheme() {
             const body = document.documentElement;
-            const currentTheme = body.getAttribute("data-theme");
-            const btn = document.getElementById("theme-toggle");
-            
-            if (currentTheme === "dark") {
-                body.removeAttribute("data-theme");
-                btn.innerHTML = '<i class="fas fa-moon"></i> <span>Dark Mode</span>';
-            } else {
-                body.setAttribute("data-theme", "dark");
-                btn.innerHTML = '<i class="fas fa-sun"></i> <span>Light Mode</span>';
-            }
+            const isDark = body.getAttribute("data-theme") === "dark";
+            body.setAttribute("data-theme", isDark ? "" : "dark");
+            document.getElementById("theme-toggle").innerHTML = isDark ? "🌙 Dark Mode" : "☀️ Light Mode";
         }
+
+        function setClock() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const ksaNow = new Date(utc + (3600000 * 3));
+            const secondsRatio = ksaNow.getSeconds() / 60;
+            const minutesRatio = (secondsRatio + ksaNow.getMinutes()) / 60;
+            const hoursRatio = (minutesRatio + ksaNow.getHours()) / 12;
+            setRotation(document.getElementById('sec'), secondsRatio);
+            setRotation(document.getElementById('min'), minutesRatio);
+            setRotation(document.getElementById('hour'), hoursRatio);
+        }
+
+        function setRotation(element, rotationRatio) {
+            if(element) element.style.setProperty('transform', `translateX(-50%) rotate(${rotationRatio * 360}deg)`);
+        }
+        setInterval(setClock, 1000);
+        setClock();
     </script>
 </body>
 </html>
