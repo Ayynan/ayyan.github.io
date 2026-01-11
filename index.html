@@ -4,36 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ayyan.codes | Link Tree</title>
+    
     <meta property="og:title" content="Ayyan.codes | Web Developer">
     <meta property="og:description" content="Check out my YouTube channel and coding projects!">
     <meta property="og:image" content="https://ayynan.github.io/me.jpg">
     <meta property="og:url" content="https://ayynan.github.io/">
-    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* 1. The Fade-In Logic */
+        /* 1. The Theme Colors */
+        :root {
+            --bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-color: #1c1e21;
+            --card-bg: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --card-bg: #1e1e1e;
+        }
+
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             text-align: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: var(--bg-color);
             min-height: 100vh;
-            color: #1c1e21;
+            color: var(--text-color);
             padding-top: 50px;
             margin: 0;
-            /* Apply animation to everything inside the body */
+            transition: background 0.5s ease, color 0.5s ease;
             animation: fadeInUp 1s ease-out;
+        }
+
+        /* Dark Mode Toggle Button */
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-color);
+            color: var(--card-bg);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
         }
 
         img {
@@ -45,15 +67,7 @@
             object-fit: cover;
         }
 
-        h1 { margin-top: 20px; font-size: 28px; }
-        p { color: #666; margin-bottom: 30px; }
-
-        a {
-            text-decoration: none;
-            display: block;
-            margin: 15px auto;
-            width: fit-content;
-        }
+        a { text-decoration: none; display: block; margin: 15px auto; width: fit-content; }
 
         button {
             background-color: #007bff;
@@ -69,23 +83,19 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: transform 0.3s ease, background-color 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
-        button:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-
+        button:hover { transform: scale(1.05); filter: brightness(1.1); }
         .youtube-btn { background-color: #ff0000; }
         .email-btn { background-color: #333; }
-        .footer-text { font-style: italic; margin-top: 40px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <img src="me.jpg" alt="Ayyan's Photo">
+    <button id="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
 
+    <img src="me.jpg" alt="Ayyan">
     <h1>Ayyan.codes</h1>
     <p>Developing the future of the web.</p>
 
@@ -101,7 +111,20 @@
         <button class="email-btn"><i class="fas fa-envelope"></i> Email Me</button>
     </a>
 
-    <p class="footer-text">"Code is my language."</p>
+    <script>
+        function toggleTheme() {
+            const body = document.documentElement;
+            const currentTheme = body.getAttribute("data-theme");
+            const btn = document.getElementById("theme-toggle");
 
+            if (currentTheme === "dark") {
+                body.removeAttribute("data-theme");
+                btn.innerHTML = "🌙 Dark Mode";
+            } else {
+                body.setAttribute("data-theme", "dark");
+                btn.innerHTML = "☀️ Light Mode";
+            }
+        }
+    </script>
 </body>
 </html>
