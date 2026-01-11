@@ -11,7 +11,6 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            /* Step 3: The Gradient Background */
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             color: #1c1e21;
@@ -28,10 +27,23 @@
             object-fit: cover;
         }
 
-        h1 { margin-top: 20px; font-size: 28px; }
-        p { color: #606770; margin-bottom: 30px; }
+        h1 {
+            margin-top: 20px;
+            font-size: 28px;
+        }
 
-        .button-container { margin-bottom: 15px; }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* The Link Wrapper - This stops the underlines! */
+        a {
+            text-decoration: none;
+            display: block;
+            margin: 15px auto;
+            width: fit-content;
+        }
 
         button {
             background-color: #007bff;
@@ -42,22 +54,34 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
             width: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px; /* Space between icon and text */
-            margin: 0 auto;
+            gap: 10px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            text-decoration: none;
         }
 
+        /* Hover Effect: Makes button grow slightly */
         button:hover {
             transform: scale(1.05);
             filter: brightness(1.1);
         }
 
-        .youtube-btn { background-color: #FF0000; }
-        .email-btn { background-color: #333333; }
+        .youtube-btn {
+            background-color: #ff0000;
+        }
+
+        .email-btn {
+            background-color: #333;
+        }
+
+        .footer-text {
+            font-style: italic;
+            margin-top: 40px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -67,25 +91,19 @@
     <h1>Ayyan.codes</h1>
     <p>Developing the future of the web.</p>
 
-    <div class="button-container">
-        <a href="https://github.com/Ayynan" target="_blank">
-            <button><i class="fab fa-github"></i> Visit my GitHub</button>
-        </a>
-    </div>
+    <a href="https://github.com/Ayynan" target="_blank">
+        <button><i class="fab fa-github"></i> Visit my GitHub</button>
+    </a>
 
-    <div class="button-container">
-        <a href="https://www.youtube.com/channel/UCKAK0xKz0c1oAJ3I2SUApHg" target="_blank">
-            <button class="youtube-btn"><i class="fab fa-youtube"></i> My YouTube Channel</button>
-        </a>
-    </div>
+    <a href="https://www.youtube.com/channel/UCKAK0xKz0c1oAJ3I2SUApHg" target="_blank">
+        <button class="youtube-btn"><i class="fab fa-youtube"></i> My YouTube Channel</button>
+    </a>
 
-    <div class="button-container">
-        <a href="mailto:ayynanwaheed2021@gmail.com">
-            <button class="email-btn"><i class="fas fa-envelope"></i> Email Me</button>
-        </a>
-    </div>
+    <a href="mailto:ayynanwaheed2021@gmail.com">
+        <button class="email-btn"><i class="fas fa-envelope"></i> Email Me</button>
+    </a>
 
-    <p style="font-style: italic; margin-top: 40px;">"Code is my language."</p>
+    <p class="footer-text">"Code is my language."</p>
 
 </body>
 </html>
