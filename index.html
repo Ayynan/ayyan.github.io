@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayyan.codes | Link Tree</title>
+    <title>Ayyan.codes | Web Developer</title>
     
     <meta property="og:title" content="Ayyan.codes | Web Developer">
     <meta property="og:description" content="Check out my YouTube channel and coding projects!">
@@ -13,19 +13,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* 1. The Theme Colors */
+        /* 1. Theme Variables */
         :root {
             --bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --text-color: #1c1e21;
             --card-bg: white;
+            --shadow: rgba(0,0,0,0.1);
         }
 
         [data-theme="dark"] {
             --bg-color: #121212;
             --text-color: #ffffff;
             --card-bg: #1e1e1e;
+            --shadow: rgba(255,255,255,0.05);
         }
 
+        /* 2. Fade-In Animation */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -37,13 +40,13 @@
             background: var(--bg-color);
             min-height: 100vh;
             color: var(--text-color);
-            padding-top: 50px;
+            padding: 50px 20px;
             margin: 0;
             transition: background 0.5s ease, color 0.5s ease;
             animation: fadeInUp 1s ease-out;
         }
 
-        /* Dark Mode Toggle Button */
+        /* Toggle Button */
         #theme-toggle {
             position: fixed;
             top: 20px;
@@ -56,6 +59,7 @@
             cursor: pointer;
             font-weight: bold;
             z-index: 1000;
+            box-shadow: 0 4px 6px var(--shadow);
         }
 
         img {
@@ -66,6 +70,10 @@
             height: 150px;
             object-fit: cover;
         }
+
+        h1 { margin-top: 20px; font-size: 28px; }
+        p { color: #666; margin-bottom: 30px; }
+        [data-theme="dark"] p { color: #aaa; }
 
         a { text-decoration: none; display: block; margin: 15px auto; width: fit-content; }
 
@@ -83,12 +91,23 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, filter 0.3s ease;
         }
 
         button:hover { transform: scale(1.05); filter: brightness(1.1); }
         .youtube-btn { background-color: #ff0000; }
         .email-btn { background-color: #333; }
+
+        /* Visitor Counter Style */
+        .counter-box {
+            margin-top: 40px;
+            font-size: 14px;
+            background: rgba(0,0,0,0.05);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+        [data-theme="dark"] .counter-box { background: rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
@@ -111,7 +130,12 @@
         <button class="email-btn"><i class="fas fa-envelope"></i> Email Me</button>
     </a>
 
+    <div class="counter-box">
+        <i class="fas fa-chart-line"></i> Visitor Milestone: <span id="visitor-count">100+</span>
+    </div>
+
     <script>
+        // Dark Mode Logic
         function toggleTheme() {
             const body = document.documentElement;
             const currentTheme = body.getAttribute("data-theme");
