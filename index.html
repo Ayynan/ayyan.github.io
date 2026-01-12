@@ -241,12 +241,37 @@
     margin: 20px auto;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+/* THE FIXED HEADER BAR */
+.modal-nav {
+    position: sticky;
+    top: -20px;
+    background: var(--card-bg);
+    width: 100%;
+    padding: 15px 20px; /* Added horizontal padding */
+    z-index: 999;
+    border-bottom: 2px solid var(--btn-primary);
+    display: flex;
+    flex-direction: row; /* Side-by-side */
+    align-items: center; /* Vertical center */
+    justify-content: flex-start; /* Push to the left */
+    gap: 15px; /* Space between button and title */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+/* Make sure the title doesn't take up too much space */
+.modal-nav h2 {
+    font-size: 1.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
    </style>
 </head>
 <body>
 <nav class="navbar">
     <div class="nav-container">
-        <div class="nav-logo">
+        <div class="nav-logo" >
              <span>▶AYYNAN</span>
         </div>
         <div class="nav-links">
@@ -341,13 +366,27 @@
     </div>
     <div id="quran-modal" class="modal">
     <div class="modal-content">
-        <span class="close-modal" onclick="closeQuran()">&times;</span>
-        <h2 id="surah-title" style="margin-top:20px;">Holy Quran</h2>
-        <div id="surah-list" class="surah-grid"></div>
-        <div id="surah-display" style="display:none;">
-            <button onclick="backToList()" class="main-btn" style="width:auto; padding:10px 20px; margin-bottom:20px;">← Back to List</button>
-            <div id="surah-text" class="quran-text-container"></div>
-        </div>
+    <span class="close-modal" onclick="closeQuran()">&times;</span>
+    
+    <div class="modal-nav">
+    <div id="back-btn-container" style="display:none;">
+        <button onclick="backToList()" class="main-btn" style="width:auto; padding:8px 15px; font-size:14px; margin:0;">
+            <i class="fas fa-arrow-left"></i> </button>
+    </div>
+
+    <h2 id="surah-title" style="margin:0;">Holy Quran</h2>
+</div>
+
+    <div id="surah-list" class="surah-grid"></div>
+    <div id="surah-list" class="surah-grid"></div>
+
+<div id="list-footer" style="padding: 20px; text-align: center;">
+    <button onclick="closeQuran()" class="main-btn" style="background: #666; width: auto; padding: 10px 30px;">
+        Close Quran
+    </button>
+</div>
+    <div id="surah-display" style="display:none;">
+        <div id="surah-text" class="quran-text-container"></div>
     </div>
 </div>
     <script>
@@ -395,9 +434,10 @@ function openQuran(e) {
     document.getElementById('quran-modal').style.display = 'block';
     const list = document.getElementById('surah-list');
     if(list.innerHTML.trim() === "") loadSurahList();
+    document.body.style.overflow = 'hidden';
 }
 
-function closeQuran() { 
+function closeQuran(auto) { 
     document.getElementById('quran-modal').style.display = 'none'; 
 }
 
@@ -418,30 +458,28 @@ async function loadSurahList() {
     } catch (err) {
         list.innerHTML = "Error loading. Check connection.";
     }
+    // Inside loadSurah function
+const backBtn = document.getElementById('back-btn-container');
+if(backBtn) {
+    backBtn.style.display = 'block'; 
+}
 }
 
+// REPLACE your old loadSurah with this one
 async function loadSurah(id, name) {
+    // ... your existing code ...
     document.getElementById('surah-list').style.display = 'none';
+    document.getElementById('list-footer').style.display = 'none'; // HIDE the close button
     document.getElementById('surah-display').style.display = 'block';
-    document.getElementById('surah-title').innerText = name;
-    const textField = document.getElementById('surah-text');
-    textField.innerHTML = '<div class="spinner"></div>';
-    
-    try {
-        const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}`);
-        const data = await res.json();
-        textField.innerHTML = data.data.ayahs.map(ayah => 
-            `${ayah.text} <span style="color:var(--btn-primary); font-size:18px;">(${ayah.numberInSurah})</span>`
-        ).join(' ');
-    } catch (err) {
-        textField.innerHTML = "Error loading verses.";
-    }
+    // ...
 }
 
 function backToList() {
+    // ... your existing code ...
     document.getElementById('surah-list').style.display = 'grid';
+    document.getElementById('list-footer').style.display = 'block'; // SHOW it again
     document.getElementById('surah-display').style.display = 'none';
-    document.getElementById('surah-title').innerText = "Holy Quran";
+    // ...
 }
     </script>
 </body>
