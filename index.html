@@ -227,7 +227,12 @@
 .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
 .modal-content { background: var(--card-bg); margin: 5% auto; padding: 20px; border-radius: 20px; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; position: relative; }
 .close-modal { position: absolute; right: 20px; top: 10px; font-size: 30px; cursor: pointer; color: var(--text-color); }
-.surah-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; }
+.surah-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 20px 0; /* Creates breathing room below the header */
+}
 .surah-card { background: var(--accent-bg); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; border: 1px solid transparent; }
 .surah-card:hover { border-color: var(--btn-primary); transform: scale(1.05); }
 .quran-text-container { font-family: 'Amiri', serif; font-size: 24px; line-height: 2.5; text-align: right; padding: 20px; direction: rtl; }
@@ -244,19 +249,20 @@
 /* THE FIXED HEADER BAR */
 .modal-nav {
     position: sticky;
-    top: -20px;
+    top: 0; /* Change from -20px to 0 */
     background: var(--card-bg);
-    width: 100%;
-    padding: 15px 20px; /* Added horizontal padding */
-    z-index: 999;
-    border-bottom: 2px solid var(--btn-primary);
+    z-index: 1000;
+}
+
+.nav-left-group {
     display: flex;
-    flex-direction: row; /* Side-by-side */
-    align-items: center; /* Vertical center */
-    justify-content: flex-start; /* Push to the left */
-    gap: 15px; /* Space between button and title */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    box-sizing: border-box;
+    align-items: center;
+    gap: 10px;
+}
+
+#audio-container audio {
+    height: 30px;
+    width: 180px; /* Kept small to save space */
 }
 
 /* Make sure the title doesn't take up too much space */
@@ -265,6 +271,244 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+@media (max-width: 600px) {
+    .modal-nav {
+        flex-wrap: wrap; /* Allows audio player to drop to a second line if the screen is too narrow */
+        justify-content: space-between;
+    }
+    #surah-audio {
+        width: 100%; /* Makes audio player full width on small phones */
+        margin-top: 10px;
+    }
+}
+.audio-controls {
+    display: flex;
+    align-items: center;
+    background: var(--accent-bg);
+    padding: 5px 10px;
+    border-radius: 50px; /* Makes it look like a pill */
+    gap: 5px;
+}
+
+.skip-btn {
+    background: transparent;
+    border: none;
+    color: var(--btn-primary);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px 10px;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skip-btn:hover {
+    color: var(--text-color);
+    transform: scale(1.1);
+}
+/* Container to keep everything in one row */
+.skip-control-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* Compact buttons that won't stack */
+.compact-skip {
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap; /* Prevents text from wrapping */
+    transition: 0.2s;
+}
+
+.compact-skip:hover {
+    background: var(--btn-primary);
+}
+
+/* Ensures the audio player has enough room for the 3 dots */
+#surah-audio {
+    height: 35px;
+    flex-grow: 1; /* Makes the player take up available space */
+    min-width: 200px; /* Essential to show the three-dot menu */
+}
+
+@media (max-width: 480px) {
+    #surah-audio {
+        min-width: 150px; /* Smaller for mobile but still visible */
+    }
+}
+.quran-player-bar {
+    display: flex !important; /* Force flexbox */
+    flex-direction: row !important; /* Force horizontal */
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 5px 0;
+}
+
+.player-btn {
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 6px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap; /* Prevents the text from splitting into two lines */
+    min-width: 45px;
+}
+
+#surah-audio {
+    height: 35px;
+    flex-grow: 1; /* Tells the player to take up all middle space */
+    min-width: 220px; /* IMPORTANT: This is the minimum width needed for the 3 dots to appear */
+}
+
+/* On very small phones, hide the labels to save space for the 3 dots */
+@media (max-width: 400px) {
+    .player-btn {
+        font-size: 10px;
+        padding: 5px;
+    }
+    #surah-audio {
+        min-width: 180px;
+    }
+}
+/* Hide the standard browser "download" button to save space */
+audio::-webkit-media-controls-enclosure {
+    background-color: transparent;
+}
+#surah-list {
+    display: grid !important;
+    /* This creates a grid that automatically adds columns */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; 
+    gap: 15px !important;
+    padding: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure the cards themselves don't stretch weirdly */
+.surah-card {
+    display: flex !important;
+    flex-direction: row !important; /* Internal card content stays horizontal */
+    justify-content: space-between;
+    align-items: center;
+    height: auto;
+}
+.ayah-block {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.arabic-text {
+    line-height: 1.8;
+    color: var(--text-color);
+}
+.trans-text {
+    line-height: 1.5;
+    color: var(--btn-primary);
+    font-style: italic;
+}
+/* Container for each Verse + Translation pair */
+.ayah-block {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* High-quality Arabic styling */
+.arabic-text {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Amiri', serif;
+    font-size: 28px;
+    line-height: 2;
+    color: #fff;
+}
+
+/* Styling for English/Urdu translations */
+.trans-text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--btn-primary); /* Uses your theme color */
+}
+
+/* Tafseer Button Styling */
+.tafseer-btn {
+    background: #444;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    align-self: flex-start; /* Keeps button on the side */
+    transition: 0.3s;
+}
+
+.tafseer-btn:hover {
+    background: #00d4ff;
+    color: #000;
+}
+/* Forces the buttons to be small and side-by-side */
+.player-btn, .compact-skip {
+    display: inline-block !important;
+    width: auto !important;
+    margin: 0 5px !important;
+}
+#audio-container {
+    display: none; /* Keep it hidden until loadSurah is called */
+    width: 100%;
+    margin-bottom: 15px;
+}
+/* 1. Ensure the container is visible and text is readable */
+#surah-text {
+    display: block !important;
+    color: var(--text-color) !important; /* Fixes invisible text in dark mode */
+    padding: 20px;
+}
+/* 2. Fix the "White on White" or "Dark on Dark" text bug */
+.ayah-block {
+    background: var(--card-bg); /* Matches your theme */
+    padding: 20px;
+    border-bottom: 1px solid var(--btn-primary);
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* 3. High-Quality Arabic Font */
+.arabic-text {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Amiri', serif;
+    font-size: 28px;
+    line-height: 2.2;
+    color: var(--text-color) !important;
+    margin-bottom: 15px;
+}
+
+/* 4. Translation text styling */
+.trans-text {
+    direction: ltr;
+    text-align: left;
+    font-size: 16px;
+    color: var(--btn-primary);
+    line-height: 1.6;
+    margin-top: 10px;
 }
    </style>
 </head>
@@ -365,39 +609,76 @@
         </footer>
     </div>
     <div id="quran-modal" class="modal">
-    <div class="modal-content">
-    <span class="close-modal" onclick="closeQuran()">&times;</span>
-    
-    <div class="modal-nav">
-    <div id="back-btn-container" style="display:none;">
-        <button onclick="backToList()" class="main-btn" style="width:auto; padding:8px 15px; font-size:14px; margin:0;">
-            <i class="fas fa-arrow-left"></i> </button>
+        <div class="modal-content">
+            <div class="modal-nav">
+                <div class="nav-left-group" style="display: flex; align-items: center; gap: 15px;">
+                    <div id="back-btn-container" style="display:none;">
+                        <button onclick="goBack()" class="main-btn" style="width:auto; padding:8px 12px; margin:0;">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                    <div id="close-btn-container">
+                        <button onclick="closeQuran()" class="main-btn" style="width:auto; padding:8px 12px; margin:0; background:#666;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <h2 id="surah-title" style="margin:0; font-size: 1.1rem;">Holy Quran</h2>
+                </div>
+            </div>
+
+            <div id="audio-container" style="display:none; flex-direction: column; align-items: center; padding: 15px; background: var(--accent-bg); border-radius: 10px; margin: 15px 0;">
+                <div style="margin-bottom: 10px; width: 100%;">
+                    <label style="font-size: 11px; font-weight: bold; opacity: 0.7;">SELECT RECITER</label>
+                    <select id="reciter-select" onchange="changeReciter()" style="width: 100%; padding: 8px; border-radius: 5px; background: var(--card-bg); color: var(--text-color);">
+                        <option value="https://server8.mp3quran.net/afs/">Mishary Rashid Alafasy</option>
+                        <option value="https://server11.mp3quran.net/sds/">Abdurrahmaan As-Sudais</option>
+                        <option value="https://server6.mp3quran.net/shur/">Saud Al-Shuraim</option>
+                        <option value="https://server13.mp3quran.net/yasser/">Yasser Al-Dosari</option>
+                    </select>
+                </div>
+                <audio id="surah-audio" controls style="width: 100%;"></audio>
+            </div>
+
+            <div id="language-settings" style="display:none; margin: 10px 0; text-align: center; background: var(--accent-bg); padding: 10px; border-radius: 10px;">
+    <label style="font-size: 14px; font-weight: bold;">Translation: </label>
+    <select id="view-mode" onchange="fetchContent()" style="padding: 5px; border-radius: 5px; background: var(--card-bg); color: var(--text-color);">
+        <option value="ar">Arabic Only</option>
+        <option value="en">Arabic + English</option>
+        <option value="ur">Arabic + Urdu</option>
+    </select>
+</div>
+
+            <div id="surah-list-container">
+                <div id="surah-list" class="surah-grid">
+                    </div>
+            </div>
+
+            <div id="surah-display-container" style="display:none;">
+                <div id="surah-text" style="padding: 10px; min-height: 200px;">
+                    </div>
+            </div>
+        </div> </div> <div id="tafseer-modal" class="modal" style="display:none; z-index: 99999;">
+        <div class="modal-content" style="max-width: 600px; border-radius: 15px;">
+            <div class="modal-nav">
+                <h2 id="tafseer-title">Tafseer</h2>
+                <button onclick="closeTafseer()" class="main-btn" style="width:auto; background:#666; border-radius: 50%; padding: 5px 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="tafseer-content" style="padding: 20px; line-height: 1.8; color: var(--text-color);">
+                Loading...
+            </div>
+        </div>
     </div>
-
-    <h2 id="surah-title" style="margin:0;">Holy Quran</h2>
-</div>
-
-    <div id="surah-list" class="surah-grid"></div>
-    <div id="surah-list" class="surah-grid"></div>
-
-<div id="list-footer" style="padding: 20px; text-align: center;">
-    <button onclick="closeQuran()" class="main-btn" style="background: #666; width: auto; padding: 10px 30px;">
-        Close Quran
-    </button>
-</div>
-    <div id="surah-display" style="display:none;">
-        <div id="surah-text" class="quran-text-container"></div>
-    </div>
-</div>
     <script>
-        /* --- SYSTEM LOGIC --- */
-// 1. Visitor Counter
+       /* --- SYSTEM & UI LOGIC --- */
 let visits = localStorage.getItem('visit_count') || 0;
 visits++;
 localStorage.setItem('visit_count', visits);
-document.getElementById('load-count').innerText = visits.toString().padStart(5, '0');
+if(document.getElementById('load-count')) {
+    document.getElementById('load-count').innerText = visits.toString().padStart(5, '0');
+}
 
-// 2. Theme Toggle
 function toggleTheme() {
     const body = document.documentElement;
     const isDark = body.getAttribute("data-theme") === "dark";
@@ -405,7 +686,6 @@ function toggleTheme() {
     document.getElementById("theme-toggle").innerHTML = isDark ? "🌙" : "☀️";
 }
 
-// 3. KSA Clock
 function setClock() {
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -417,70 +697,217 @@ function setClock() {
     setRotation(document.getElementById('min'), minutesRatio);
     setRotation(document.getElementById('hour'), hoursRatio);
 }
+
 function setRotation(element, rotationRatio) {
     if(element) element.style.setProperty('transform', `translateX(-50%) rotate(${rotationRatio * 360}deg)`);
 }
-setInterval(setClock, 1000); 
+setInterval(setClock, 1000);
 setClock();
 
-// 4. Mobile Menu
 function toggleMenu() {
     document.querySelector('.nav-links').classList.toggle('active');
 }
 
-/* --- QURAN FUNCTIONS (REPLACE ALL OLD ONES WITH THESE) --- */
-function openQuran(e) {
+/* --- QURAN CORE LOGIC --- */
+window.currentSurahId = 1;
+
+// 1. Open Quran Modal
+window.openQuran = function(e) {
     if(e) e.preventDefault();
     document.getElementById('quran-modal').style.display = 'block';
-    const list = document.getElementById('surah-list');
-    if(list.innerHTML.trim() === "") loadSurahList();
-    document.body.style.overflow = 'hidden';
-}
+    window.goBack(); // Start at the list view
+    fetchSurahs(); 
+};
 
-function closeQuran(auto) { 
-    document.getElementById('quran-modal').style.display = 'none'; 
-}
-
-async function loadSurahList() {
+// 2. Fetch the list of 114 Surahs
+async function fetchSurahs() {
     const list = document.getElementById('surah-list');
-    list.innerHTML = '<div class="spinner"></div><p style="text-align:center; width:100%;">Loading Surahs...</p>';
+    if (!list || list.innerHTML.trim() !== "") return; 
+
+    list.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:20px;">Loading Surahs...</div>';
     
     try {
         const res = await fetch('https://api.alquran.cloud/v1/surah');
         const data = await res.json();
-        list.innerHTML = data.data.map(surah => `
-            <div class="surah-card" onclick="loadSurah(${surah.number}, '${surah.englishName.replace(/'/g, "\\'")}')">
-                <small>${surah.number}</small>
-                <div style="font-weight:bold;">${surah.englishName}</div>
-                <div style="font-size:12px; opacity:0.7;">${surah.name}</div>
-            </div>
-        `).join('');
+        list.innerHTML = '';
+        data.data.forEach(surah => {
+            const card = document.createElement('div');
+            card.className = 'surah-card';
+            card.innerHTML = `
+                <div class="surah-info">
+                    <span class="surah-number">${surah.number}</span>
+                    <div>
+                        <h4 style="margin:0;">${surah.englishName}</h4>
+                        <small>${surah.name}</small>
+                    </div>
+                </div>`;
+            card.onclick = () => loadSurah(surah.number, surah.englishName);
+            list.appendChild(card);
+        });
     } catch (err) {
-        list.innerHTML = "Error loading. Check connection.";
+        list.innerHTML = "Error loading list.";
     }
-    // Inside loadSurah function
-const backBtn = document.getElementById('back-btn-container');
-if(backBtn) {
-    backBtn.style.display = 'block'; 
-}
 }
 
-// REPLACE your old loadSurah with this one
-async function loadSurah(id, name) {
-    // ... your existing code ...
-    document.getElementById('surah-list').style.display = 'none';
-    document.getElementById('list-footer').style.display = 'none'; // HIDE the close button
-    document.getElementById('surah-display').style.display = 'block';
-    // ...
-}
+// 3. Load a specific Surah
+window.loadSurah = async function(id, name) {
+    window.currentSurahId = id;
+    
+    document.getElementById('surah-list-container').style.display = 'none';
+    document.getElementById('surah-display-container').style.display = 'block';
+    
+    // --- SHOW THE UI ELEMENTS ---
+    document.getElementById('audio-container').style.display = 'flex';
+    document.getElementById('language-settings').style.display = 'block'; // SHOW BAR
+    document.getElementById('back-btn-container').style.display = 'block';
+    document.getElementById('close-btn-container').style.display = 'none';
+    
+    document.getElementById('surah-title').innerText = name;
 
-function backToList() {
-    // ... your existing code ...
-    document.getElementById('surah-list').style.display = 'grid';
-    document.getElementById('list-footer').style.display = 'block'; // SHOW it again
-    document.getElementById('surah-display').style.display = 'none';
-    // ...
-}
+    window.changeReciter(); 
+    window.fetchContent(); 
+};
+
+// 4. Fetch Verses
+window.fetchContent = async function() {
+    const display = document.getElementById('surah-text');
+    const mode = document.getElementById('view-mode').value;
+    
+    if(!display) return;
+    display.innerHTML = '<p style="text-align:center; padding:20px;">Loading Ayahs...</p>';
+
+    try {
+        const response = await fetch(`https://api.alquran.cloud/v1/surah/${window.currentSurahId}/editions/quran-uthmani,en.sahih,ur.jalandhry`);
+        const result = await response.json();
+
+        if (result.code === 200) {
+            let html = "";
+            const ar = result.data[0].ayahs;
+            const en = result.data[1].ayahs;
+            const ur = result.data[2].ayahs;
+
+            ar.forEach((ayah, i) => {
+                const num = i + 1;
+                let translation = "";
+                let alignment = "left";
+                let dir = "ltr";
+
+                // Set logic for English vs Urdu alignment
+                if (mode === "en") {
+                    translation = en[i].text;
+                    alignment = "left";
+                    dir = "ltr";
+                } else if (mode === "ur") {
+                    translation = ur[i].text;
+                    alignment = "right";
+                    dir = "rtl";
+                }
+
+                html += `
+                    <div class="ayah-block" style="margin-bottom: 40px; border-bottom: 1px solid var(--accent-bg); padding-bottom: 25px;">
+                        <p style="font-size: 28px; text-align: right; direction: rtl; line-height: 2.2; font-family: 'Amiri', serif; color: var(--text-color); margin-bottom: 15px;">
+                            ${ayah.text} <span style="color: var(--btn-primary); font-size: 18px;">(${num})</span>
+                        </p>
+
+                        <p style="font-size: 17px; color: var(--text-color); opacity: 0.9; text-align: ${alignment}; direction: ${dir}; line-height: 1.8; margin-bottom: 15px;">
+                            ${translation}
+                        </p>
+                        
+                        <div style="text-align: center; margin-top: 10px;">
+                            <button onclick="window.showTafseer(${window.currentSurahId}, ${num})" 
+                                    style="background: transparent; color: var(--btn-primary); border: 1px solid var(--btn-primary); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; text-transform: uppercase;">
+                                <i class="fas fa-book-open"></i> View Tafseer
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            display.innerHTML = html;
+        }
+    } catch (e) {
+        display.innerHTML = '<p style="color:red; text-align:center;">Failed to load text.</p>';
+    }
+};
+
+// 5. Navigation Control (Back to List)
+window.goBack = function() {
+    document.getElementById('surah-title').innerText = "Holy Quran";
+
+    document.getElementById('surah-list-container').style.display = 'block';
+    document.getElementById('surah-display-container').style.display = 'none';
+    
+    // --- HIDE THE UI ELEMENTS ---
+    document.getElementById('audio-container').style.display = 'none';
+    document.getElementById('language-settings').style.display = 'none'; // HIDE BAR
+    document.getElementById('back-btn-container').style.display = 'none';
+    document.getElementById('close-btn-container').style.display = 'block';
+
+    const player = document.getElementById('surah-audio');
+    if (player) {
+        player.pause();
+        player.src = "";
+    }
+};
+window.closeQuran = function() {
+    document.getElementById('quran-modal').style.display = 'none';
+    const player = document.getElementById('surah-audio');
+    if (player) player.pause();
+};
+
+/* --- AUDIO LOGIC --- */
+window.changeReciter = function() {
+    const player = document.getElementById('surah-audio');
+    const reciterBaseUrl = document.getElementById('reciter-select').value;
+    const paddedId = window.currentSurahId.toString().padStart(3, '0');
+    player.src = reciterBaseUrl + paddedId + ".mp3";
+    player.load();
+};
+window.showTafseer = async function(surah, ayah) {
+    const modal = document.getElementById('tafseer-modal');
+    const content = document.getElementById('tafseer-content');
+    const title = document.getElementById('tafseer-title');
+    const mode = document.getElementById('view-mode').value;
+    
+    // 1. Show modal and loading state
+    modal.style.display = 'block';
+    content.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading Tafseer...</div>';
+    title.innerText = `Tafseer - Ayah ${ayah}`;
+
+    // 2. Choose edition (English or Urdu)
+    let edition = (mode === 'ur') ? 'ur.jalandhry' : 'en.ahmedali';
+    content.style.textAlign = (mode === 'ur') ? 'right' : 'left';
+    content.style.direction = (mode === 'ur') ? 'rtl' : 'ltr';
+
+    try {
+        // Fetch from API
+        const response = await fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/${edition}`);
+        const result = await response.json();
+        
+        if(result.code === 200) {
+            content.innerHTML = `<div style="font-size: 18px; padding: 10px;">${result.data.text}</div>`;
+        } else {
+            content.innerHTML = "Tafseer not available for this verse.";
+        }
+    } catch (error) {
+        content.innerHTML = "Connection error. Please try again.";
+    }
+};
+window.closeTafseer = function() {
+    const modal = document.getElementById('tafseer-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+window.onclick = function(event) {
+    const quranModal = document.getElementById('quran-modal');
+    const tafseerModal = document.getElementById('tafseer-modal');
+    
+    if (event.target == quranModal) {
+        closeQuran();
+    }
+    if (event.target == tafseerModal) {
+        closeTafseer();
+    }
+};
     </script>
 </body>
 </html>
