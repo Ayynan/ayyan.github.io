@@ -571,13 +571,31 @@ audio::-webkit-media-controls-enclosure {
 }
 /* Futuristic Radar Style */
 /* Modern Minimalist Qibla Style */
+/* Update your existing Qibla CSS with this */
 #qibla-arrow-container {
-    background: #ffffff;
-    border: 1px solid #e0e0e0 !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    background: transparent !important; /* Removes the white box look */
+    border: none !important; /* Removes the border that cuts off the moon */
+    width: 280px !important; /* Wider to fit the moon orbit */
+    height: 280px !important;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#sun-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.celestial-icon {
+    position: absolute;
+    top: -30px; /* Moves the moon higher up so it doesn't touch the blue ring */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
 }
 
 /* The Rotating Ring */
@@ -621,24 +639,6 @@ audio::-webkit-media-controls-enclosure {
     0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     50% { transform: scale(1.1); box-shadow: 0 5px 25px rgba(0, 123, 255, 0.4); }
     100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-}
-/* Fix the celestial (Sun/Moon) orbit */
-#sun-indicator {
-    position: absolute;
-    width: 260px; /* Make this slightly larger than the white circle */
-    height: 260px;
-    pointer-events: none;
-    z-index: 5;
-    transition: transform 0.5s ease-out; /* Smooth movement */
-}
-
-.celestial-icon {
-    position: absolute;
-    top: -25px; /* Pull it further out from the center */
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
    </style>
 </head>
@@ -1366,13 +1366,17 @@ window.jumpToAyah = function() {
             <h2 style="font-weight: 300; letter-spacing: 1px;">Qibla Finder</h2>
             <p id="instruction-text" style="opacity: 0.6; font-size: 0.9rem;">Click the button below to activate live tracking</p>
             
-            <div id="qibla-arrow-container" style="position: relative; width: 220px; height: 220px;">
-    <div class="kaaba-icon pulse-animation"></div>
+            <div id="qibla-container-wrapper" style="position: relative; width: 300px; height: 300px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
     
-    <div id="qibla-needle" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: #007bff;"></div>
-    
-    <div id="sun-indicator" style="display: none;">
-        <div class="celestial-icon">🌙</div>
+    <div style="position: absolute; width: 180px; height: 180px; background: #fff; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1;">
+        <div class="kaaba-icon pulse-animation" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+    </div>
+
+    <div id="qibla-needle" style="position: absolute; width: 220px; height: 220px; border-radius: 50%; border: 4px solid transparent; border-top-color: #007bff; z-index: 2; transition: transform 0.2s ease-out;"></div>
+
+    <div id="sun-indicator" style="position: absolute; width: 100%; height: 100%; z-index: 3; display: none;">
+        <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-weight: bold; color: #ff4444; font-size: 14px;">N</div>
+        <div class="celestial-icon" style="position: absolute; top: -35px; left: 50%; transform: translateX(-50%); font-size: 28px;">🌙</div>
     </div>
 </div>
     
@@ -1581,6 +1585,89 @@ function activateListeners() {
 
             // 3. UI Feedback
             if (relQibla <= 8 || relQibla >= 352) {
+                info.innerText = "🕋 Facing Kaaba";
+                info.style.color = "#2e7d32";
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                info.innerText = `${Math.round(relQibla)}°`;
+                info.style.color = "#007bff";
+            }
+        }
+    };
+
+    window.addEventListener('deviceorientationabsolute', handler, true);
+    window.addEventListener('deviceorientation', handler, true);
+}
+window.startCompass = async function() {
+    const info = document.getElementById('qibla-info');
+    
+    // Check if we are on a secure connection
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        info.innerText = "Error: Use HTTPS for Compass";
+        return;
+    }
+
+    try {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            const res = await DeviceOrientationEvent.requestPermission();
+            if (res === 'granted') {
+                initLiveTracking();
+            }
+        } else {
+            initLiveTracking();
+        }
+    } catch (e) {
+        info.innerText = "Sensor Access Denied";
+    }
+};
+
+function initLiveTracking() {
+    const celestialInd = document.getElementById('sun-indicator');
+    const needle = document.getElementById('qibla-needle');
+    const info = document.getElementById('qibla-info');
+
+    // Show moon immediately
+    celestialInd.style.display = 'block';
+    celestialInd.innerHTML = `<div class="celestial-icon">🌙</div>`;
+    
+    window.addEventListener('deviceorientationabsolute', (e) => {
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
+        if (heading) {
+            let relQibla = (qiblaAngle - heading + 360) % 360;
+            let relMoon = ((new Date().getHours() * 15 + 180) - heading + 360) % 360;
+
+            needle.style.transform = `rotate(${relQibla}deg)`;
+            celestialInd.style.transform = `rotate(${relMoon}deg)`;
+
+            info.innerText = Math.round(relQibla) <= 5 || Math.round(relQibla) >= 355 ? 
+                             "🕋 Facing Kaaba" : `${Math.round(relQibla)}°`;
+        }
+    });
+}
+function initLiveTracking() {
+    const celestialInd = document.getElementById('sun-indicator');
+    const needle = document.getElementById('qibla-needle');
+    const info = document.getElementById('qibla-info');
+
+    celestialInd.style.display = 'block';
+    
+    const handler = (event) => {
+        // 1. Get Phone Heading (Standardized for Android/iOS)
+        let heading = event.webkitCompassHeading || (event.absolute ? event.alpha : null);
+        
+        if (heading !== null) {
+            if (!event.webkitCompassHeading) heading = 360 - heading;
+
+            // 2. Rotate North/Moon Layer
+            // Heading is the degrees from North, so we rotate negative heading to keep N at True North
+            celestialInd.style.transform = `rotate(${-heading}deg)`;
+
+            // 3. Rotate Blue Needle to Qibla
+            let relQibla = (qiblaAngle - heading + 360) % 360;
+            needle.style.transform = `rotate(${relQibla}deg)`;
+
+            // 4. Feedback Logic
+            if (relQibla <= 5 || relQibla >= 355) {
                 info.innerText = "🕋 Facing Kaaba";
                 info.style.color = "#2e7d32";
                 if (navigator.vibrate) navigator.vibrate(50);
