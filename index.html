@@ -569,9 +569,83 @@ audio::-webkit-media-controls-enclosure {
     scrollbar-width: none;
     overflow-y: auto; /* Only one scrollbar allowed */
 }
+/* Futuristic Radar Style */
+/* Modern Minimalist Qibla Style */
+#qibla-arrow-container {
+    background: #ffffff;
+    border: 1px solid #e0e0e0 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The Rotating Ring */
+#qibla-needle {
+    background: transparent !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #007bff; /* The Blue Indicator */
+    filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.4));
+    transition: transform 0.1s linear; /* Fast response for live tracking */
+}
+
+/* Minimal Kaaba Icon in Center */
+.kaaba-icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #333;
+    border-radius: 4px;
+    border-top: 8px solid #ffd700; /* Gold band */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+/* The pulsing Kaaba icon */
+.kaaba-icon {
+    width: 45px;
+    height: 45px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    border-top: 10px solid #ffd700;
+    z-index: 2;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.pulse-animation {
+    animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+    0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    50% { transform: scale(1.1); box-shadow: 0 5px 25px rgba(0, 123, 255, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+}
+/* Fix the celestial (Sun/Moon) orbit */
+#sun-indicator {
+    position: absolute;
+    width: 260px; /* Make this slightly larger than the white circle */
+    height: 260px;
+    pointer-events: none;
+    z-index: 5;
+    transition: transform 0.5s ease-out; /* Smooth movement */
+}
+
+.celestial-icon {
+    position: absolute;
+    top: -25px; /* Pull it further out from the center */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
    </style>
 </head>
 <body>
+    <div id="offline-alert" style="display:none; background: #ff0000; color: white; text-align: center; padding: 10px; font-family: monospace; position: sticky; top: 0; z-index: 9999;">
+    [!] SYSTEM OFFLINE: QIBLA & QURAN API UNAVAILABLE
+</div>
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo" >
@@ -650,6 +724,12 @@ audio::-webkit-media-controls-enclosure {
             <h3>Hadith</h3>
         </div>
     </a>
+    <a href="#" onclick="openQibla(event)" class="card-link">
+        <div class="feature-card">
+            <i class="fas fa-compass" style="color: #007bff;"></i> 
+            <h3>Qibla</h3>
+        </div>
+    </a>
 </div>
         <h2 class="section-title" id="contact">Contact</h2>
         <form action="https://formspree.io/f/ayynanwaheed2021@gmail.com" method="POST">
@@ -658,6 +738,27 @@ audio::-webkit-media-controls-enclosure {
             <textarea name="message" rows="3" placeholder="Message" required></textarea>
             <button type="submit" class="main-btn">Send Message</button>
         </form>
+        <div id="qibla-view" style="display:none; text-align:center; padding:40px; animation: fadeIn 0.5s;">
+    <h2 style="font-weight: 300; letter-spacing: 1px;">Qibla Finder</h2>
+    <p id="instruction-text" style="opacity: 0.6; font-size: 0.9rem;">Click below to activate live tracking</p>
+    
+    <div id="qibla-arrow-container" style="margin: 40px auto; width: 220px; height: 220px; border-radius: 50%; position: relative; border: 1px solid #e0e0e0; background: #fff; display: flex; align-items: center; justify-content: center;">
+        <div class="kaaba-icon pulse-animation"></div>
+        <div id="qibla-needle" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: #007bff; transition: transform 0.1s linear;"></div>
+        
+        <div id="sun-indicator" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; pointer-events: none; display: none;">
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 24px;">☀️</div>
+        </div>
+    </div>
+    
+    <div id="qibla-info" style="font-size: 1.5rem; font-weight: bold; color: #007bff; margin-bottom:15px;">Sensor Paused</div>
+    
+    <button id="start-compass-btn" onclick="startCompass()" class="main-btn" style="background:#007bff; color:white; border:none; padding:12px 25px; border-radius:25px; cursor:pointer; font-weight:bold;">
+        <i class="fas fa-compass"></i> ACTIVATE LIVE COMPASS
+    </button>
+    <br>
+    <button onclick="closeQibla()" style="margin-top: 20px; background: none; border: none; color: #666; cursor: pointer;">✕ Close</button>
+</div>
         <footer>
             <div class="final-msg">"Coding is my language."</div>
             <div class="system-footer">
@@ -1252,6 +1353,247 @@ window.jumpToAyah = function() {
         alert("Ayah " + num + " not found!");
     }
 };
+    window.openQibla = function(event) {
+        if (!navigator.onLine) {
+    alert("Qibla Finder requires an active internet connection to access GPS coordinates.");
+    return;
+}
+    if(event) event.preventDefault();
+    const container = document.querySelector('.container');
+    
+    container.innerHTML = `
+        <div style="text-align:center; padding:40px; animation: fadeIn 0.5s;">
+            <h2 style="font-weight: 300; letter-spacing: 1px;">Qibla Finder</h2>
+            <p id="instruction-text" style="opacity: 0.6; font-size: 0.9rem;">Click the button below to activate live tracking</p>
+            
+            <div id="qibla-arrow-container" style="position: relative; width: 220px; height: 220px;">
+    <div class="kaaba-icon pulse-animation"></div>
+    
+    <div id="qibla-needle" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: #007bff;"></div>
+    
+    <div id="sun-indicator" style="display: none;">
+        <div class="celestial-icon">🌙</div>
+    </div>
+</div>
+    
+    <div id="sun-indicator" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; pointer-events: none; display: none;">
+        <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 20px;">☀️</div>
+    </div>
+</div>
+                </div>
+            
+            <div id="qibla-info" style="font-size: 1.5rem; font-weight: bold; color: #007bff; margin-bottom:15px;">Sensor Paused</div>
+            
+            <button id="start-compass-btn" onclick="startCompass()" class="main-btn" style="background:#007bff; color:white; border:none; padding:12px 25px; border-radius:25px; cursor:pointer; font-weight:bold;">
+                <i class="fas fa-compass"></i> ACTIVATE LIVE COMPASS
+            </button>
+            <br>
+            <button onclick="location.reload()" style="margin-top: 20px; background: none; border: none; color: #666; cursor: pointer;">✕ Close</button>
+        </div>
+    `;
+
+    let qiblaAngle = 0;
+
+    // Fetch GPS and calculate fixed Qibla angle
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const kLat = 21.4225, kLng = 39.8262; // Kaaba
+
+            const y = Math.sin((kLng - lng) * Math.PI/180);
+            const x = Math.cos(lat * Math.PI/180) * Math.tan(kLat * Math.PI/180) -
+                      Math.sin(lat * Math.PI/180) * Math.cos((kLng - lng) * Math.PI/180);
+            
+            qiblaAngle = (Math.atan2(y, x) * 180/Math.PI + 360) % 360;
+        });
+    }
+
+    // This function handles the actual rotation once permission is granted
+    window.startCompass = async function() {
+    const celestialInd = document.getElementById('sun-indicator');
+    const info = document.getElementById('qibla-info');
+    const hour = new Date().getHours();
+
+    // Force the icon to show immediately so you know the UI is alive
+    celestialInd.style.display = 'block';
+    celestialInd.innerHTML = `<div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 28px;">🌙</div>`;
+    info.innerText = "Connecting to Sensors...";
+
+    try {
+        if (typeof DeviceOrientationEvent !== 'undefined' && 
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+            const res = await DeviceOrientationEvent.requestPermission();
+            if (res === 'granted') {
+                runLiveCompass();
+            } else {
+                info.innerText = "Access Denied";
+            }
+        } else {
+            runLiveCompass();
+        }
+    } catch (e) {
+        info.innerText = "Error: Use HTTPS";
+    }
+};
+
+function runCompassLogic() {
+    const info = document.getElementById('qibla-info');
+    info.innerText = "Aligning...";
+
+    // Use 'absolute' for Android and 'deviceorientation' for iOS
+    const eventName = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
+
+    window.addEventListener(eventName, (e) => {
+        // webkitCompassHeading is the most accurate for iOS
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
+        
+        if (heading) {
+            let relQibla = (qiblaAngle - heading + 360) % 360;
+            
+            // Update UI
+            document.getElementById('qibla-needle').style.transform = `rotate(${relQibla}deg)`;
+            
+            if (Math.round(relQibla) <= 5 || Math.round(relQibla) >= 355) {
+                info.innerText = "🕋 Facing Kaaba";
+                info.style.color = "#2e7d32";
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                info.innerText = `${Math.round(relQibla)}°`;
+                info.style.color = "#007bff";
+            }
+        }
+    }, true);
+}
+
+    function initListeners() {
+    // 'absolute' is critical for True North accuracy
+    window.addEventListener('deviceorientationabsolute', handleRotate, true);
+    
+    // Fallback for older devices
+    if (!('ondeviceorientationabsolute' in window)) {
+        window.addEventListener('deviceorientation', handleRotate, true);
+    }
+}
+
+function handleRotate(event) {
+    // Add this at the top of your script to calculate solar position
+function getSunBearing() {
+    const hour = new Date().getHours();
+    // Simple approximation: Sun rises at 90 (E) and sets at 270 (W)
+    // In Buraydah, it moves roughly 15 degrees per hour
+    return (hour * 15 + 180) % 360; 
+}
+
+function handleRotate(event) {
+    let heading = event.webkitCompassHeading || (360 - event.alpha);
+    
+    if (heading) {
+        let relativeAngle = (qiblaAngle - heading + 360) % 360;
+        let sunAngle = (getSunBearing() - heading + 360) % 360;
+
+        const needle = document.getElementById('qibla-needle');
+        const sunIcon = document.getElementById('sun-indicator');
+        
+        // Rotate Qibla Indicator
+        if(needle) needle.style.transform = `rotate(${relativeAngle}deg)`;
+        
+        // Rotate Sun Indicator
+        if(sunIcon) {
+            sunIcon.style.transform = `rotate(${sunAngle}deg)`;
+            sunIcon.style.display = 'block';
+        }
+
+        // ... (keep your existing "Facing Kaaba" text logic here)
+    }
+}
+    // Use webkitCompassHeading for iOS or absolute alpha for Android
+    let heading = event.webkitCompassHeading || (event.absolute ? event.alpha : null);
+    
+    if (heading !== null) {
+        // If using alpha on Android, it is usually 360 - alpha for clockwise heading
+        if (!event.webkitCompassHeading) heading = 360 - heading;
+
+        // The angle you need to turn the needle relative to your phone's front
+        let relativeAngle = (qiblaAngle - heading + 360) % 360;
+        
+        const needle = document.getElementById('qibla-needle');
+        const info = document.getElementById('qibla-info');
+        const icon = document.querySelector('.kaaba-icon');
+
+        needle.style.transform = `rotate(${relativeAngle}deg)`;
+
+        // Strictness check: 5 degrees of tolerance
+        if (relativeAngle <= 5 || relativeAngle >= 355) {
+            info.innerText = "🕋 Facing Kaaba";
+            info.style.color = "#2e7d32";
+            icon.style.filter = "drop-shadow(0 0 15px #2e7d32)"; // Glow green when correct
+            
+            // Haptic Feedback (Vibrate)
+            if (navigator.vibrate) navigator.vibrate(50); 
+        } else {
+            info.innerText = `${Math.round(relativeAngle)}°`;
+            info.style.color = "#007bff";
+            icon.style.filter = "none";
+        }
+    }
+}
+};
+
+// Listen for network changes
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Check status on initial load
+updateOnlineStatus();
+function getCelestialBearing() {
+    const hour = new Date().getHours();
+    // Simplified: Celestial bodies move 15 degrees per hour
+    // This is an approximation to help you verify the compass
+    return (hour * 15 + 180) % 360; 
+}
+
+function activateListeners() {
+    const info = document.getElementById('qibla-info');
+    const needle = document.getElementById('qibla-needle');
+    const celestialInd = document.getElementById('sun-indicator');
+    const hour = new Date().getHours();
+    
+    // Set icon based on time
+    celestialInd.innerHTML = `<div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 24px;">${(hour >= 6 && hour < 18) ? '☀️' : '🌙'}</div>`;
+
+    const handler = (event) => {
+        // Use the most accurate heading available for mobile websites
+        let heading = event.webkitCompassHeading || (event.absolute ? event.alpha : null);
+        
+        if (heading !== null) {
+            if (!event.webkitCompassHeading) heading = 360 - heading;
+
+            // 1. Update Qibla
+            let relQibla = (qiblaAngle - heading + 360) % 360;
+            needle.style.transform = `rotate(${relQibla}deg)`;
+
+            // 2. Update Moon/Sun
+            let bearing = getCelestialBearing();
+            let relCelestial = (bearing - heading + 360) % 360;
+            celestialInd.style.display = 'block';
+            celestialInd.style.transform = `rotate(${relCelestial}deg)`;
+
+            // 3. UI Feedback
+            if (relQibla <= 8 || relQibla >= 352) {
+                info.innerText = "🕋 Facing Kaaba";
+                info.style.color = "#2e7d32";
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                info.innerText = `${Math.round(relQibla)}°`;
+                info.style.color = "#007bff";
+            }
+        }
+    };
+
+    window.addEventListener('deviceorientationabsolute', handler, true);
+    window.addEventListener('deviceorientation', handler, true);
+}
     </script>
 </body>
 </html>
